@@ -159,7 +159,8 @@ module Sass
         end
         groups.compact!
         groups.map! do |sels, seq|
-          seen.include?(sels) ? [] : seq.do_extend(extends, parent_directives, seen + [sels])
+          next [] if seen.include?(sels)
+          seq.do_extend(extends, parent_directives, !:replace, seen + [sels])
         end
         groups.flatten!
         groups.uniq!

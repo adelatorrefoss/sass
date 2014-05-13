@@ -53,16 +53,19 @@ module Sass
       #   The extensions to perform on this selector
       # @param parent_directives [Array<Sass::Tree::DirectiveNode>]
       #   The directives containing this selector.
+      # @param replace [Boolean]
+      #   Whether to replace the original selector entirely or include
+      #   it in the result.
       # @return [CommaSequence] A copy of this selector,
       #   with extensions made according to `extends`
-      def do_extend(extends, parent_directives = [])
+      def do_extend(extends, parent_directives = [], replace = false)
         CommaSequence.new(members.map do |seq|
-          extended = seq.do_extend(extends, parent_directives)
+          extended = seq.do_extend(extends, parent_directives, replace)
           # First Law of Extend: the result of extending a selector should
           # always contain the base selector.
           #
           # See https://github.com/nex3/sass/issues/324.
-          extended.unshift seq unless seq.has_placeholder? || extended.include?(seq)
+          extended.unshift seq unless replace || seq.has_placeholder? || extended.include?(seq)
           extended
         end.flatten)
       end
